@@ -12,6 +12,7 @@ library(plotly) # interactive plots
 library(sf)
 library(tidycensus)
 library(htmltools)
+library(purrr)
 ```
 
 ```{r, echo = F, results = "hide"}
