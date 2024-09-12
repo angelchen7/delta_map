@@ -113,8 +113,12 @@ svi_wgs <- st_transform(svi, crs = '+proj=longlat +datum=WGS84')
 ##temporary workaround: remove spherical geometry (should probably be using a projected CRS in the future)
 sf::sf_use_s2(FALSE)
 ## select census tracts that intersect with delta boundary
-svi_delta <- svi_wgs[lengths(st_intersects(svi_wgs, legal_eco_wgs84))>0,]
-ces_delta <- ces_wgs[lengths(st_intersects(ces_wgs, legal_eco_wgs84))>0,]
+svi_delta <- svi_wgs %>%
+  # select areas that intersect with delta boundary
+  st_intersection(legal_eco_wgs84)
+ces_delta <- ces_wgs %>%
+  # select areas that intersect with delta boundary
+  st_intersection(legal_eco_wgs84)
 
 # ## spatial join restoration projects and SVI datasets
 rest_svi_join <- st_join(cnra, svi_wgs, largest = T)
