@@ -436,19 +436,19 @@ leaflet() %>%
               label = ~htmlEscape(paste("CI score:", CIscore))) %>%
   addPolygons(data = legal_eco_wgs84, 
               color = "black", fillOpacity = 0, weight = 1) %>% 
-  addCircleMarkers(group = "cnra", data = cnra,
+  addCircleMarkers(group = "CNRA", data = cnra,
                    opacity = .8, fillOpacity = 0.5, weight = 2, color = "blue", radius = 7,
                    label = ~htmlEscape(paste("CNRA:", project_title))) %>%
-  addCircleMarkers(group = "sfbra", data = sfbra,
+  addCircleMarkers(group = "SFBRA", data = sfbra,
                    opacity = .8, fillOpacity = 0.5, weight = 2, color = "red", radius = 7,
                    label = ~htmlEscape(paste("SFBRA:", project_title))) %>%
-  addCircleMarkers(group = "cscc", data = cscc,
+  addCircleMarkers(group = "CSCC", data = cscc,
                    opacity = .8, fillOpacity = 0.5, weight = 2, color = "limegreen", radius = 7,
                    label = ~htmlEscape(paste("CSCC:", project_title))) %>%
-  addCircleMarkers(group = "cdfw", data = cdfw,
+  addCircleMarkers(group = "CDFW", data = cdfw,
                    opacity = .8, fillOpacity = 0.5, weight = 2, color = "blueviolet", radius = 7,
                    label = ~htmlEscape(paste("CDFW:", project_title))) %>%
-  addCircleMarkers(group = "ssjdc", data = ssjdc,
+  addCircleMarkers(group = "SSJDC", data = ssjdc,
                    opacity = .8, fillOpacity = 0.5, weight = 2, color = "darkorange", radius = 7,
                    label = ~htmlEscape(paste("SSJDC:", project_title))) %>%
   # adding more restoration relevant layers
@@ -493,11 +493,11 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
     baseGroups = c("Grey background", "Imagery"),
     overlayGroups = c("SOVI_theme_1",
                       "CES4.0_CIscore",
-                      "cnra",
-                      "sfbra",
-                      "cscc",
-                      "cdfw",
-                      "ssjdc",
+                      "CNRA",
+                      "SFBRA",
+                      "CSCC",
+                      "CDFW",
+                      "SSJDC",
                       "California Protected Areas Database (CPAD)",
                       "California Conservation Easement Database (CCED)",
                       "Nationwide flood hazard (NOAA)",
@@ -512,11 +512,11 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
                       "Parks With Public Access (Trust for Public Land)"),
     options = layersControlOptions(collapsed = FALSE)) %>%
   # hide these groups by default
-  hideGroup(c("cnra",
-              "sfbra",
-              "cscc",
-              "cdfw",
-              "ssjdc",
+  hideGroup(c("CNRA",
+              "SFBRA",
+              "CSCC",
+              "CDFW",
+              "SSJDC",
               "California Protected Areas Database (CPAD)",
               "California Conservation Easement Database (CCED)",
               "Nationwide flood hazard (NOAA)",
