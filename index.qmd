@@ -351,8 +351,49 @@ parks_delta <- st_read(file.path(boxpath, "data", "sandbox", "restoration_releva
   # get everything in the same coordinate reference system (WGS84 = '+init=EPSG:4326')
   st_transform('+proj=longlat +datum=WGS84') %>%
   # select areas that intersect with delta boundary
-  st_intersection(legal_eco_wgs84)
+  st_intersection(legal_eco_wgs84) %>%
+  # rename column names that got cut off 
+  # see the Parkserve_Parks.shp.xml 
+  dplyr::rename(Park_Size_Acres = Park_Size_) %>%
+  dplyr::rename(Park_Size_SQFT = Park_Size1) %>%
+  dplyr::rename(Park_Size_SQMeters = Park_Siz_1) %>%
+  # create a new column for square miles
+  dplyr::mutate(Park_Size_SQMiles = Park_Size_Acres/640, .after = Park_Size_Acres)
 ```
+
+
+```{r}
+# Percent Park Area in Census Tract
+
+# function that completely erases y from x (see st_difference help page)
+st_erase <- function(x, y) st_difference(x, st_make_valid(st_union(st_combine(y))))
+
+# erase the park polygons from census tracts
+parks_erased <- st_erase(svi_delta, parks_delta)
+
+parks_erased_v2 <- parks_erased %>%
+  # create a unique id column for each census tract
+  dplyr::mutate(id = 1:n(),
+                # calculate the non-park area in each tract (square meters)
+                non_park_area_m2 = as.vector(st_area(.))) %>%
+  # convert to regular data frame
+  as.data.frame() %>%
+  # select relevant columns
+  dplyr::select(id, non_park_area_m2)
+
+percent_park_tract_delta <- svi_delta %>%
+  # create a unique id column for each census tract
+  mutate(id = 1:n(),
+          # calculate the total area of each tract (square meters)
+         tract_area_m2 = as.vector(st_area(.))) %>%
+  # left-join with the non-park area info
+  dplyr::left_join(parks_erased_v2) %>%
+  # calculate percent of each tract that is non-park
+  dplyr::mutate(percent_non_park = round((non_park_area_m2/tract_area_m2)*100, digits = 1),
+                # calculate percent of each tract that is park
+                percent_park = round(100-percent_non_park, digits = 1))
+```
+
 
 ```{r, echo = F, results = "hide"}
 
@@ -404,6 +445,11 @@ pal.themes <- colorNumeric(palette = c("darkgreen", "lemonchiffon", "brown"),
 
 pal.themes.ces <- colorNumeric(
   palette = c("darkgreen", "lemonchiffon", "brown"),
+  domain = c(0, 100)
+)
+
+parks_pal <- colorNumeric(
+  palette = c("lemonchiffon", "lightgreen", "darkgreen"),
   domain = c(0, 100)
 )
 
@@ -486,6 +532,9 @@ leaflet() %>%
                    opacity = 1, weight = 0.5, color = ~places_pal(mhlth_crud), radius = 5,
                    label = ~htmlEscape(paste("
 Model-based estimate for crude prevalence of frequent mental distress among adults, 2022:", mhlth_crud))) %>%
+    addPolygons(group = "Percent of Park Area in Census Tract", data = percent_park_tract_delta,
+              opacity = .5, weight = 1, color = "gray", fillColor = ~parks_pal(percent_park), 
+              label = ~htmlEscape(paste("Percent of park area in census tract:", percent_park))) %>%
   addPolygons(group = "Parks With Public Access (Trust for Public Land)", data = parks_delta,
               opacity = .5, weight = 1, color = "darkseagreen",
               label = ~htmlEscape(paste("Park name:", Park_Name))) %>%
@@ -509,6 +558,7 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
                       "Terrestrial Significant Habitats Summary (CDFW)",
                       "Aquatic Significant Habitats Summary (CDFW)",
                       "PLACES: Census Tract Data, 2023 release (CDC)",
+                      "Percent of Park Area in Census Tract",
                       "Parks With Public Access (Trust for Public Land)"),
     options = layersControlOptions(collapsed = FALSE)) %>%
   # hide these groups by default
@@ -528,6 +578,7 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
               "Terrestrial Significant Habitats Summary (CDFW)",
               "Aquatic Significant Habitats Summary (CDFW)",
               "PLACES: Census Tract Data, 2023 release (CDC)",
+              "Percent of Park Area in Census Tract",
               "Parks With Public Access (Trust for Public Land)"))
 
 ```
