@@ -173,6 +173,46 @@ cced_delta <- st_read(file.path(boxpath, "data", "sandbox","restoration_relevant
 ```
 
 ```{r, echo = F, results = "hide"}
+# Percent Protected Area in Census Tract
+
+# function that completely erases y from x (see st_difference help page)
+st_erase <- function(x, y) st_difference(x, st_make_valid(st_union(st_combine(y))))
+
+# combine the geometries and delete the polygon borders for cpad and cced
+protected_delta <- st_make_valid(st_union(st_combine(cpad_delta)))
+protected_delta2 <- st_make_valid(st_union(st_combine(cced_delta)))
+
+# unite the cpad and cced geometries together
+protected_delta3 <- st_union(protected_delta, protected_delta2)
+
+# erase the protected area polygons from census tracts
+protected_erased <- st_erase(svi_delta, protected_delta3)
+
+protected_erased_v2 <- protected_erased %>%
+  # create a unique id column for each census tract
+  dplyr::mutate(id = 1:n(),
+                # calculate the non-park area in each tract (square meters)
+                non_protected_area_m2 = as.vector(st_area(.))) %>%
+  # convert to regular data frame
+  as.data.frame() %>%
+  # select relevant columns
+  dplyr::select(id, non_protected_area_m2)
+
+percent_protected_tract_delta <- svi_delta %>%
+  # create a unique id column for each census tract
+  mutate(id = 1:n(),
+          # calculate the total area of each tract (square meters)
+         tract_area_m2 = as.vector(st_area(.))) %>%
+  # left-join with the non-protected area info
+  dplyr::left_join(protected_erased_v2) %>%
+  # calculate percent of each tract that is non-protected
+  dplyr::mutate(percent_non_protected = round((non_protected_area_m2/tract_area_m2)*100, digits = 1),
+                # calculate percent of each tract that is protected
+                percent_protected = round(100-percent_non_protected, digits = 1))
+
+```
+
+```{r, echo = F, results = "hide"}
 # Nationwide flood hazard data (NOAA)
 noaa_delta <- st_read(file.path(boxpath, "data", "sandbox", "restoration_relevant_layers", 
                           "NFHL_06_20240730", 
@@ -461,6 +501,7 @@ terrest_conn_pal <- colorNumeric(palette = "Set1", domain = terrest_conn_delta$C
 terrest_hab_pal <- colorNumeric(palette = "Set2", domain = terrest_hab_delta$TerrHabRan)
 aqua_hab_pal <- colorNumeric(palette = "Accent", domain = aqua_hab_delta$AqHabRank)
 places_pal <- colorNumeric(palette = "Purples", domain = places_delta$mhlth_crud)
+protected_pal <- colorNumeric(palette = "Reds", domain = percent_protected_tract_delta$percent_protected)
 ```
 
 # Page 1
@@ -504,6 +545,9 @@ leaflet() %>%
   addPolygons(group = "California Conservation Easement Database (CCED)", data = cced_delta,
               opacity = .5, weight = 1, color = "turquoise",
               label = ~htmlEscape(paste("Site name:", sitename))) %>%
+  addPolygons(group = "Percent of Protected Area in Census Tract", data = percent_protected_tract_delta,
+              opacity = .5, weight = 1, color = "gray", fillColor = ~protected_pal(percent_protected), 
+              label = ~htmlEscape(paste("Percent of protected area in census tract:", percent_protected))) %>%
   addPolygons(group = "Nationwide flood hazard (NOAA)", data = noaa_delta_combined,
               opacity = .5, weight = 1, color = ~noaa_pal(ZONE_DESIGNATION),
               label = ~htmlEscape(paste("Zone designation:", ZONE_DESIGNATION))) %>%
@@ -549,6 +593,7 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
                       "SSJDC",
                       "California Protected Areas Database (CPAD)",
                       "California Conservation Easement Database (CCED)",
+                      "Percent of Protected Area in Census Tract",
                       "Nationwide flood hazard (NOAA)",
                       # "Urban Heat Island index (CalEPA)",
                       "Cleanup Sites (CalOEHHA)",
@@ -569,6 +614,7 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
               "SSJDC",
               "California Protected Areas Database (CPAD)",
               "California Conservation Easement Database (CCED)",
+              "Percent of Protected Area in Census Tract",
               "Nationwide flood hazard (NOAA)",
               #"Urban Heat Island index (CalEPA)"
               "Cleanup Sites (CalOEHHA)",
