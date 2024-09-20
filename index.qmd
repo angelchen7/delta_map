@@ -527,24 +527,24 @@ protected_pal <- colorNumeric(palette = "Reds", domain = percent_protected_tract
 leaflet() %>%
   addProviderTiles(providers$CartoDB.Positron, group = "Grey background") %>%
   addProviderTiles("Esri.WorldImagery", group = "Imagery") %>% 
-  addPolygons(group = "Socio-economic Status", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.1(RPL_THEME1), weight = 1, fillOpacity = .8,
+  addPolygons(group = "Socio-economic Status (CDC)", data = svi_delta,
+              color = "gray", fillColor = ~pal.themes.1(RPL_THEME1), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Socio-economic status:", RPL_THEME1))) %>%
-  addPolygons(group = "Household Characteristics", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.2(RPL_THEME2), weight = 1, fillOpacity = .8,
+  addPolygons(group = "Household Characteristics (CDC)", data = svi_delta,
+              color = "gray", fillColor = ~pal.themes.2(RPL_THEME2), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Household characteristics:", RPL_THEME2))) %>%
-  addPolygons(group = "Racial & Ethnic Minority Status", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.3(RPL_THEME3), weight = 1, fillOpacity = .8,
+  addPolygons(group = "Racial & Ethnic Minority Status (CDC)", data = svi_delta,
+              color = "gray", fillColor = ~pal.themes.3(RPL_THEME3), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Racial & ethnic minority status:", RPL_THEME3))) %>%
-  addPolygons(group = "Housing Type & Transportation", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.4(RPL_THEME4), weight = 1, fillOpacity = .8,
-              label = ~htmlEscape(paste("Housing type & transportation:", RPL_THEME4))) %>%
-  addPolygons(group = "Overall Vulnerability", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.5(RPL_THEMES), weight = 1, fillOpacity = .8,
+  addPolygons(group = "Housing Type & Transportation (CDC)", data = svi_delta,
+              color = "gray", fillColor = ~pal.themes.4(RPL_THEME4), weight = 1, fillOpacity = .7,
+              label = ~htmlEscape(paste("Housing type and transportation:", RPL_THEME4))) %>%
+  addPolygons(group = "Overall Vulnerability (CDC)", data = svi_delta,
+              color = "gray", fillColor = ~pal.themes.5(RPL_THEMES), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Overall vulnerability:", RPL_THEMES))) %>%
-  addPolygons(group = "CES4.0_CIscore", data = ces_delta, 
+  addPolygons(group = "Cleanup Sites Score (CES 4.0)", data = ces_delta, 
               color = ~pal.themes.ces(CIscore), fillColor = ~pal.themes.ces(CIscore), weight = 1, fillOpacity = .8,
-              label = ~htmlEscape(paste("CI score:", CIscore))) %>%
+              label = ~htmlEscape(paste("Cleanup sites score:", CIscore))) %>%
   addPolygons(data = legal_eco_wgs84, 
               color = "black", fillOpacity = 0, weight = 1) %>% 
   addCircleMarkers(group = "CNRA", data = cnra,
@@ -608,17 +608,17 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
               label = ~htmlEscape(paste("Park name:", Park_Name))) %>%
   addLayersControl(
     baseGroups = c("Grey background", "Imagery"),
-    overlayGroups = c("Socio-economic Status",
-                      "Household Characteristics",
-                      "Racial & Ethnic Minority Status",
-                      "Housing Type & Transportation",
-                      "Overall Vulnerability",
-                      "CES4.0_CIscore",
-                      "CNRA",
+    overlayGroups = c("CNRA",
                       "SFBRA",
                       "CSCC",
                       "CDFW",
                       "SSJDC",
+                      "Socio-economic Status (CDC)",
+                      "Household Characteristics (CDC)",
+                      "Racial & Ethnic Minority Status (CDC)",
+                      "Housing Type & Transportation (CDC)",
+                      "Overall Vulnerability (CDC)",
+                      "Cleanup Sites Score (CES 4.0)",
                       "California Protected Areas Database (CPAD)",
                       "California Conservation Easement Database (CCED)",
                       "Percent of Protected Area in Census Tract",
@@ -631,21 +631,21 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
                       "Terrestrial Significant Habitats Summary (CDFW)",
                       "Aquatic Significant Habitats Summary (CDFW)",
                       "PLACES: Census Tract Data, 2023 release (CDC)",
-                      "Percent of Park Area in Census Tract",
-                      "Parks With Public Access (Trust for Public Land)"),
+                      "Parks With Public Access (Trust for Public Land)",
+                      "Percent of Park Area in Census Tract"),
     options = layersControlOptions(collapsed = FALSE)) %>%
   # hide these groups by default
-  hideGroup(c("Socio-economic Status",
-              "Household Characteristics",
-              "Racial & Ethnic Minority Status",
-              "Housing Type & Transportation",
-              "Overall Vulnerability",
-              "CES4.0_CIscore",
-              "CNRA",
+  hideGroup(c("CNRA",
               "SFBRA",
               "CSCC",
               "CDFW",
               "SSJDC",
+              "Socio-economic Status (CDC)",
+              "Household Characteristics (CDC)",
+              "Racial & Ethnic Minority Status (CDC)",
+              "Housing Type & Transportation (CDC)",
+              "Overall Vulnerability (CDC)",
+              "Cleanup Sites Score (CES 4.0)",
               "California Protected Areas Database (CPAD)",
               "California Conservation Easement Database (CCED)",
               "Percent of Protected Area in Census Tract",
@@ -658,8 +658,8 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
               "Terrestrial Significant Habitats Summary (CDFW)",
               "Aquatic Significant Habitats Summary (CDFW)",
               "PLACES: Census Tract Data, 2023 release (CDC)",
-              "Percent of Park Area in Census Tract",
-              "Parks With Public Access (Trust for Public Land)"))
+              "Parks With Public Access (Trust for Public Land)",
+              "Percent of Park Area in Census Tract"))
 
 ```
 
