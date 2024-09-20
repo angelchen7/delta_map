@@ -240,62 +240,6 @@ noaa_delta_combined <- noaa_delta %>%
 
 ```
 
-
-```{r, echo = F, results = "hide"}
-# Urban Heat Island index (CalEPA)
-# ignore for now
-
-# calEPA_sf <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/18_San_Francisco/San_Francisco_UHII_SF_only.shp")) %>%
-#   dplyr::mutate(name = "San Francisco")
-# 
-# calEPA_napa <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/03_Napa/Napa_UHIIs.shp")) %>%
-#   dplyr::mutate(name = "Napa")
-# 
-# calEPA_eastbay <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/25_East_Bay/Easy_Bay_UHII.shp")) %>%
-#   dplyr::mutate(name = "East Bay") 
-# 
-# calEPA_sanraf <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/05_San_Rafael/San_Rafael_UHII.shp"))%>%
-#   dplyr::mutate(name = "San Rafael")
-# 
-# calEPA_vall <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/20_Vallejo/Vallejo_UHII.shp")) %>%
-#   dplyr::mutate(name = "Vallejo")
-# 
-# calEPA_sac <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/04_Sacramento/Sacramento_UHII.shp"))%>%
-#   dplyr::mutate(name = "Sacramento")
-# 
-# calEPA_davis <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/01_Davis/Davis_UHII.shp"))%>%
-#   dplyr::mutate(name = "Davis")
-# 
-# calEPA_fair <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/02_Fairfield/Fairfield_UHII.shp"))%>%
-#   dplyr::mutate(name = "Fairfield")
-# 
-# calEPA_ant <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/22_Antioch/Antioch_UHII.shp"))%>%
-#   dplyr::mutate(name = "Antioch") 
-# 
-# calEPA_modesto <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/12_Modesto/Modesto_UHII.shp"))%>%
-#   dplyr::mutate(name = "Modesto")
-# 
-# calEPA_walnut <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/21_Walnut_Creek/Walnut_Creek_UHII.shp"))%>%
-#   dplyr::mutate(name = "Walnut Creek")
-# 
-# calEPA_manteca <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/10_Manteca/Manteca_UHII.shp"))%>%
-#   dplyr::mutate(name = "Manteca")
-# 
-# calEPA_lodi <- st_read(paste0(boxpath, "data/sandbox/restoration_relevant_layers/Data_13-001/ALL_DATA_DH_Day/09_Lodi/Lodi_UHII.shp"))%>%
-#   dplyr::mutate(name = "Lodi")
-# 
-# # combine all the shapefiles together
-# calEPA_combined <- dplyr::bind_rows(list(calEPA_ant, calEPA_davis, calEPA_eastbay,
-#                         calEPA_fair, calEPA_napa, calEPA_sac, calEPA_sf,
-#                         calEPA_sanraf, calEPA_vall, calEPA_lodi, calEPA_manteca, calEPA_modesto, calEPA_walnut)) %>%
-#   # get everything in the same coordinate reference system (WGS84 = '+init=EPSG:4326')
-#   st_transform('+proj=longlat +datum=WGS84')
-# 
-# # select areas that intersect with delta boundary
-# calEPA_delta_combined <- calEPA_combined[lengths(st_intersects(calEPA_combined, legal_eco_wgs84))>0,]
-
-```
-
 ```{r, echo = F, results = "hide"}  
 # Cleanup Sites (CalOEHHA)
 calOEHHA <- read.delim(file.path(boxpath, "data", "sandbox", "restoration_relevant_layers",
@@ -506,7 +450,6 @@ parks_pal <- colorNumeric(
 )
 
 noaa_pal <- colorFactor(c("burlywood1", "lightcoral", "darkgray"), noaa_delta_combined$ZONE_DESIGNATION)
-#uhii_pal <- colorNumeric(palette = "Reds", domain = calEPA_delta_combined$UHII)
 terrest_rich_pal <- colorNumeric(palette = "viridis", domain = terrest_rich_delta$NativeCoun)
 aqua_rich_pal <- colorNumeric(palette = c("skyblue", "royalblue"), domain = aqua_rich_delta$NtvAqRankS)
 terrest_conn_pal <- colorNumeric(palette = "Set1", domain = terrest_conn_delta$Connectivi)
@@ -575,9 +518,6 @@ leaflet() %>%
   addPolygons(group = "Nationwide flood hazard (NOAA)", data = noaa_delta_combined,
               opacity = .5, weight = 1, color = ~noaa_pal(ZONE_DESIGNATION),
               label = ~htmlEscape(paste("Zone designation:", ZONE_DESIGNATION))) %>%
-#  addPolygons(group = "Urban Heat Island index (CalEPA)", data = calEPA_delta_combined,
-#              opacity = .5, weight = 1, color = ~uhii_pal(UHII),
-#              label = ~htmlEscape(paste("UHII:", UHII))) %>%
   addCircleMarkers(group = "Cleanup Sites (CalOEHHA)", data = calOEHHA_delta,
                    opacity = 1, weight = 0.5, color = "tan", radius = 5,
                    label = ~htmlEscape(paste("Cleanup site:", ADDRESS))) %>%
@@ -623,7 +563,6 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
                       "California Conservation Easement Database (CCED)",
                       "Percent of Protected Area in Census Tract",
                       "Nationwide flood hazard (NOAA)",
-                      # "Urban Heat Island index (CalEPA)",
                       "Cleanup Sites (CalOEHHA)",
                       "Terrestrial Native Species Richness (CDFW)",
                       "Aquatic Native Species Richness (CDFW)",
@@ -650,7 +589,6 @@ Model-based estimate for crude prevalence of frequent mental distress among adul
               "California Conservation Easement Database (CCED)",
               "Percent of Protected Area in Census Tract",
               "Nationwide flood hazard (NOAA)",
-              #"Urban Heat Island index (CalEPA)"
               "Cleanup Sites (CalOEHHA)",
               "Terrestrial Native Species Richness (CDFW)",
               "Aquatic Native Species Richness (CDFW)",
