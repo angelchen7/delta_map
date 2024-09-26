@@ -434,7 +434,7 @@ centroids_metrics <- datasets %>%
   dplyr::rename(park_name = Park_Name) 
 
 # export results
-#write.csv(centroids_metrics, "restoration_metrics.csv", row.names = FALSE)
+#write.csv(centroids_metrics, paste0("restoration_metrics_", Sys.Date(), ".csv"), row.names = FALSE)
 ```
 
 ```{r}
