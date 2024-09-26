@@ -445,13 +445,13 @@ centroids_metrics <- datasets %>%
 pal.themes.1 <- colorNumeric(palette = c("lemonchiffon", "orange", "brown"),
                            domain = c(-1, 1))
 
-pal.themes.2 <- colorNumeric(palette = c("lightblue", "steelblue", "mediumblue"),
+pal.themes.2 <- colorNumeric(palette = c("#c3f6f7", "steelblue", "mediumblue"),
                            domain = c(-1, 1))
 
-pal.themes.3 <- colorNumeric(palette = c("pink", "hotpink", "maroon"),
+pal.themes.3 <- colorNumeric(palette = c("#ffd1f7", "hotpink", "#752368"),
                            domain = c(-1, 1))
 
-pal.themes.4 <- colorNumeric(palette = c("thistle", "orchid", "purple"),
+pal.themes.4 <- colorNumeric(palette = c("#f59d45", "#957ee0", "#25078a"),
                            domain = c(-1, 1))
 
 legend_order <- factor(svi_delta$bins, levels = c("Low", "Medium-Low", "Medium-High", "High", "No Data"))
@@ -510,7 +510,7 @@ leaflet() %>%
             position = "bottomleft", pal = pal.themes.5, values = legend_order,
             title = "Overall Vulnerability") %>%
   addPolygons(group = "Cleanup Sites Score (CES 4.0)", data = ces_delta, 
-              color = ~pal.themes.ces(CIscore), fillColor = ~pal.themes.ces(CIscore), weight = 1, fillOpacity = .8,
+              color = "gray", fillColor = ~pal.themes.ces(CIscore), weight = 1, fillOpacity = .8,
               label = ~htmlEscape(paste("Cleanup sites score:", CIscore))) %>%
   addPolygons(data = legal_eco_wgs84, 
               color = "black", fillOpacity = 0, weight = 1) %>% 
