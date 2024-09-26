@@ -404,9 +404,9 @@ svi_delta <- svi_delta %>%
 ## ------------------------------------------------------- ##
 
 # list out the datasets we want to join to restoration sites
-datasets <- list(centroids, svi_wgs, ces_wgs, cpad_delta, cced_delta,
+datasets <- list(centroids, svi_wgs, ces_wgs, cpad_delta, cced_delta, percent_protected_tract_delta,
                  noaa_delta, terrest_rich_delta, aqua_rich_delta,
-                 terrest_conn_delta, terrest_hab_delta, aqua_hab_delta, parks_delta)
+                 terrest_conn_delta, terrest_hab_delta, aqua_hab_delta, parks_delta, percent_park_tract_delta)
 
 centroids_metrics <- datasets %>%
   # left-join the datasets iteratively
@@ -416,8 +416,8 @@ centroids_metrics <- datasets %>%
   # select only the columns of interest
   dplyr::select(colnames(centroids), AREA_SQMI, E_TOTPOP, RPL_THEME1, RPL_THEME2,
                 RPL_THEME3, RPL_THEME4, RPL_THEMES, CIscore, CIscoreP,
-                UNIT_NAME, sitename, ZONE_DESIGNATION, NativeCoun, NtvAqRankS,
-                Connectivi, TerrHabRan, AqHabRank, Park_Name) %>%
+                UNIT_NAME, sitename, percent_protected, ZONE_DESIGNATION, NativeCoun, NtvAqRankS,
+                Connectivi, TerrHabRan, AqHabRank, Park_Name, percent_park) %>%
   # convert to only data frame
   as.data.frame() %>%
   # drop the sticky geometry column
