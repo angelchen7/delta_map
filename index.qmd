@@ -378,6 +378,24 @@ percent_park_tract_delta <- svi_delta %>%
                 percent_park = round(100-percent_non_park, digits = 1))
 ```
 
+```{r, echo = F, results = "hide"}
+# Binning Overall Vulnerability
+
+# 0 to 0.2500 = low
+# 0.2501 to 0.5000 = medium-low
+# 0.5001 to 0.7500 = medium-high
+# 0.7501 to 1.0 = high
+
+svi_delta <- svi_delta %>%
+  dplyr::mutate(bins = dplyr::case_when(
+    RPL_THEMES >= 0 & RPL_THEMES < 0.2501 ~ "Low",
+    RPL_THEMES >= 0.2501 & RPL_THEMES < 0.5001 ~ "Medium-Low",
+    RPL_THEMES >= 0.5001 & RPL_THEMES < 0.7501 ~ "Medium-High",
+    RPL_THEMES >= 0.7501 & RPL_THEMES <= 1.0 ~ "High",
+    RPL_THEMES < 0 ~ "No Data"
+  ))
+
+```
 
 ```{r, echo = F, results = "hide"}
 
@@ -436,8 +454,11 @@ pal.themes.3 <- colorNumeric(palette = c("pink", "hotpink", "maroon"),
 pal.themes.4 <- colorNumeric(palette = c("thistle", "orchid", "purple"),
                            domain = c(-1, 1))
 
-pal.themes.5 <- colorNumeric(palette = c("gold", "orange", "orangered"),
-                           domain = c(-1, 1))
+legend_order <- factor(svi_delta$bins, levels = c("Low", "Medium-Low", "Medium-High", "High", "No Data"))
+
+pal.themes.5 <- colorFactor(palette = c("#ffffe7", "#d2edda", "#a7dbe1", "#96b0d5", "gray"),
+                            levels = c("Low", "Medium-Low", "Medium-High", "High", "No Data"), 
+                            ordered = TRUE)
 
 pal.themes.ces <- colorNumeric(
   palette = c("darkgreen", "lemonchiffon", "brown"),
@@ -483,8 +504,11 @@ leaflet() %>%
               color = "gray", fillColor = ~pal.themes.4(RPL_THEME4), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Housing type and transportation:", RPL_THEME4))) %>%
   addPolygons(group = "Overall Vulnerability (CDC)", data = svi_delta,
-              color = "gray", fillColor = ~pal.themes.5(RPL_THEMES), weight = 1, fillOpacity = .7,
-              label = ~htmlEscape(paste("Overall vulnerability:", RPL_THEMES))) %>%
+              color = "gray", fillColor = ~pal.themes.5(bins), weight = 1, fillOpacity = .7,
+              label = ~htmlEscape(paste0("Overall vulnerability: ", RPL_THEMES,", ", bins))) %>%
+  addLegend(group = "Overall Vulnerability (CDC)", data = svi_delta,
+            position = "bottomleft", pal = pal.themes.5, values = legend_order,
+            title = "Overall Vulnerability") %>%
   addPolygons(group = "Cleanup Sites Score (CES 4.0)", data = ces_delta, 
               color = ~pal.themes.ces(CIscore), fillColor = ~pal.themes.ces(CIscore), weight = 1, fillOpacity = .8,
               label = ~htmlEscape(paste("Cleanup sites score:", CIscore))) %>%
