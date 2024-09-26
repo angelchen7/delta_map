@@ -499,7 +499,7 @@ leaflet() %>%
               label = ~htmlEscape(paste("Household characteristics:", RPL_THEME2))) %>%
   addPolygons(group = "Racial & Ethnic Minority Status (CDC)", data = svi_delta,
               color = "gray", fillColor = ~pal.themes.3(RPL_THEME3), weight = 1, fillOpacity = .7,
-              label = ~htmlEscape(paste("Racial & ethnic minority status:", RPL_THEME3))) %>%
+              label = ~htmlEscape(paste("Racial and ethnic minority status:", RPL_THEME3))) %>%
   addPolygons(group = "Housing Type & Transportation (CDC)", data = svi_delta,
               color = "gray", fillColor = ~pal.themes.4(RPL_THEME4), weight = 1, fillOpacity = .7,
               label = ~htmlEscape(paste("Housing type and transportation:", RPL_THEME4))) %>%
